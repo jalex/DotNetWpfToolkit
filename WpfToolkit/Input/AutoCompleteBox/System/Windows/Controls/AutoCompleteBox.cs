@@ -54,32 +54,32 @@ namespace System.Windows.Controls
         /// <summary>
         /// Specifies the name of the selection adapter TemplatePart.
         /// </summary>
-        private const string ElementSelectionAdapter = "SelectionAdapter";
+        protected const string ElementSelectionAdapter = "SelectionAdapter";
 
         /// <summary>
         /// Specifies the name of the Selector TemplatePart.
         /// </summary>
-        private const string ElementSelector = "Selector";
+        protected const string ElementSelector = "Selector";
 
         /// <summary>
         /// Specifies the name of the Popup TemplatePart.
         /// </summary>
-        private const string ElementPopup = "Popup";
-        
+        protected const string ElementPopup = "Popup";
+
         /// <summary>
         /// The name for the text box part.
         /// </summary>
-        private const string ElementTextBox = "Text";
+        protected const string ElementTextBox = "Text";
 
         /// <summary>
         /// The name for the text box style.
         /// </summary>
-        private const string ElementTextBoxStyle = "TextBoxStyle";
+        protected const string ElementTextBoxStyle = "TextBoxStyle";
 
         /// <summary>
         /// The name for the adapter's item container style.
         /// </summary>
-        private const string ElementItemContainerStyle = "ItemContainerStyle";
+        protected const string ElementItemContainerStyle = "ItemContainerStyle";
 
         #endregion
 
@@ -1115,7 +1115,7 @@ namespace System.Windows.Controls
         /// <summary>
         /// Gets or sets the drop down popup control.
         /// </summary>
-        private PopupHelper DropDownPopup { get; set; }
+        protected PopupHelper DropDownPopup { get; set; }
 
         /// <summary>
         /// The TextBox template part.
@@ -1130,7 +1130,7 @@ namespace System.Windows.Controls
         /// <summary>
         /// Gets or sets the Text template part.
         /// </summary>
-        internal TextBox TextBox
+        protected internal TextBox TextBox
         {
             get { return _text; }
             set
@@ -1701,7 +1701,7 @@ namespace System.Windows.Controls
         /// </summary>
         /// <param name="hasFocus">A value indicating whether the control 
         /// currently has the focus.</param>
-        private void FocusChanged(bool hasFocus)
+        protected virtual void FocusChanged(bool hasFocus)
         {
             // The OnGotFocus & OnLostFocus are asynchronously and cannot 
             // reliably tell you that have the focus.  All they do is let you 
@@ -2148,7 +2148,13 @@ namespace System.Windows.Controls
             if ((userInitiated == null || userInitiated == true) && Text != value)
             {
                 _ignoreTextPropertyChange++;
-                Text = value;
+                try
+                {
+                    Text = value;
+                } finally
+                {
+                    _ignoreTextPropertyChange--;
+                }
 #if SILVERLIGHT
                 OnTextChanged(new RoutedEventArgs());
 #else
@@ -2159,7 +2165,7 @@ namespace System.Windows.Controls
             // Update the TextBox's Text dependency property
             if ((userInitiated == null || userInitiated == false) && TextBox != null && TextBox.Text != value)
             {
-                _ignoreTextPropertyChange++;
+                //_ignoreTextPropertyChange++;
                 TextBox.Text = value ?? string.Empty;
 
                 // Text dependency property value was set, fire event
@@ -2186,11 +2192,11 @@ namespace System.Windows.Controls
         {
             // Only process this event if it is coming from someone outside 
             // setting the Text dependency property directly.
-            if (_ignoreTextPropertyChange > 0)
-            {
-                _ignoreTextPropertyChange--;
-                return;
-            }
+            //if (_ignoreTextPropertyChange > 0)
+            //{
+            //    _ignoreTextPropertyChange--;
+            //    return;
+            //}
 
             if (newText == null)
             {

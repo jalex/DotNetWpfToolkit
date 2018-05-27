@@ -17,7 +17,7 @@ namespace System.Windows.Controls
     /// PopupHelper is a simple wrapper type that helps abstract platform
     /// differences out of the Popup.
     /// </summary>
-    internal class PopupHelper
+    public class PopupHelper
     {
 #if SILVERLIGHT
         /// <summary>
