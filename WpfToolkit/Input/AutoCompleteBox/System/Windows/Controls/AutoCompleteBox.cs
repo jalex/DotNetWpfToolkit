@@ -2163,10 +2163,18 @@ namespace System.Windows.Controls
             }
 
             // Update the TextBox's Text dependency property
-            if ((userInitiated == null || userInitiated == false) && TextBox != null && TextBox.Text != value)
+            var textBoxValue = value ?? string.Empty;
+            if ((userInitiated == null || userInitiated == false) && TextBox != null && TextBox.Text != textBoxValue)
             {
-                //_ignoreTextPropertyChange++;
-                TextBox.Text = value ?? string.Empty;
+                _ignoreTextPropertyChange++;
+                try
+                {
+                    TextBox.Text = textBoxValue;
+                }
+                finally
+                {
+                    _ignoreTextPropertyChange--;
+                }
 
                 // Text dependency property value was set, fire event
                 if (Text == value || Text == null)
@@ -2192,7 +2200,8 @@ namespace System.Windows.Controls
         {
             // Only process this event if it is coming from someone outside 
             // setting the Text dependency property directly.
-            //if (_ignoreTextPropertyChange > 0)
+            if (_ignoreTextPropertyChange > 0)
+                return;
             //{
             //    _ignoreTextPropertyChange--;
             //    return;
